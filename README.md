@@ -15,6 +15,9 @@ You can install ``bottom-swift`` by adding it as a local dependency:
 
 ```swift
 import Bottomify
+
+print("Hello World!".bottomified())
+print(try "💖✨✨,,👉👈💖💖,👉👈💖💖🥺,,,👉👈💖💖🥺,,,👉👈💖💖✨,👉👈✨✨✨,,👉👈💖✨✨✨🥺,,👉👈💖💖✨,👉👈💖💖✨,,,,👉👈💖💖🥺,,,👉👈💖💖👉👈✨✨✨,,,👉👈".regressed())
 ```
 
 ## [More Bottom](https://github.com/bottom-software-foundation/awesome-bottom)
