@@ -3,7 +3,7 @@ import SwiftCLI
 import Files
 
 enum CLIError: Error {
-  case translationError (why: String)
+    case translationError(why: String)
 }
 
 class BottomifyCLI: Command {
@@ -35,17 +35,13 @@ class BottomifyCLI: Command {
         throw CLIError.translationError(why: "Either input text or the --input options must be provided.")
       }
 
-      var _input: String
-
       if text != nil {
-        _input = text!
+        return text!
       } else {
         // Key/Param does not yet support defaults...
         // So stdin/stdout feeding can't be done as easily. 
-        _input = try File(path: input!).readAsString()
+        return try File(path: input!).readAsString()
       }
-
-      return _input
     }
 
     func write(_ text: String) throws {

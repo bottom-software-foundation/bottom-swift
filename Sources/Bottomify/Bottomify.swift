@@ -1,8 +1,7 @@
 import Foundation
 
 enum BottomTranslationError: Error {
-    case incorrectlyEncoded(text: String)
-    case incorrectUnicode(text: String)
+    case incorrectlyEncoded(why: String)
 }
 
 enum BottomEmoji: String, CaseIterable {
@@ -78,22 +77,19 @@ public extension String {
     
     func regressed() throws -> String {
         try trimmingCharacters(in: .whitespacesAndNewlines)
-            .replacingOccurrences(of: "\(Self.sectionSeparator)?$", with: Self.init(), options: .regularExpression)
+            .replacingOccurrences(of: "\(Self.sectionSeparator)?$", with: Self(), options: .regularExpression)
             .components(separatedBy: Self.sectionSeparator)
             .map { letters throws -> [BottomEmoji] in
                 try letters.map { value throws -> BottomEmoji in
                     guard let emoji = BottomEmoji(rawValue: String(value)) else {
-                        throw BottomTranslationError.incorrectlyEncoded(text: "Could not decode \(self)")
+                        throw BottomTranslationError.incorrectlyEncoded(why: "Could not decode \(self)")
                     }
                     return emoji
                 }
             }.map { letters -> UInt32 in
                 letters.reduce(.zero, { initial, bottomEmoji in initial + BottomCharacter(from: bottomEmoji).rawValue }) 
-            }.map { letter throws -> Unicode.Scalar in
-                guard let scalarValue = Unicode.Scalar(letter) else {
-                    throw BottomTranslationError.incorrectUnicode(text: "")
-                }
-                return scalarValue
+            }.map { letter -> Unicode.Scalar in
+                Unicode.Scalar(letter)!
             }.map { String($0) }.joined()
     }
 }
