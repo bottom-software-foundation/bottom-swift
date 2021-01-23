@@ -1,9 +1,20 @@
 import Bottomify
 import SwiftCLI
 import Files
+import Foundation
 
-enum CLIError: Error {
-    case translationError(why: String)
+enum CLIError: LocalizedError {
+    case translationError
+    case fileIOError(filename: String)
+
+    var errorDescription: String? {
+      switch self {
+          case .translationError:
+              return NSLocalizedString("Either input text or the --input options must be provided.", comment: "")
+          case .fileIOError(let filename):
+              return NSLocalizedString("Could not operate on file \(filename).", comment: "")
+      }
+    }
 }
 
 class BottomifyCLI: Command {
@@ -25,39 +36,43 @@ class BottomifyCLI: Command {
     @Param var text: String?
 
     var optionGroups: [OptionGroup] {
-      return [
-        .atMostOne($bottomify, $regress),
-      ]
+        [
+            .atMostOne($bottomify, $regress),
+        ]
     }
 
-    func getText() throws -> String {
-      if text != nil && input != nil || text == nil && input == nil {
-        throw CLIError.translationError(why: "Either input text or the --input options must be provided.")
+    func getText() -> Result<String, Error> {
+      guard !(text != nil && input != nil || text == nil && input == nil) else {
+          return .failure(CLIError.translationError)
       }
 
-      if text != nil {
-        return text!
+      if let text = text {
+          return .success(text)
       } else {
         // Key/Param does not yet support defaults...
-        // So stdin/stdout feeding can't be done as easily. 
-        return try File(path: input!).readAsString()
+        // So stdin/stdout feeding can't be done as easily.
+        return input.flatMap {
+            try? File(path: $0).readAsString()
+        }.map { .success($0) } ?? .failure(CLIError.fileIOError(filename: input!))
       }
     }
 
-    func write(_ text: String) throws {
+    func write(_ text: String) -> Result<Void, Error> {
       if output != nil {
-          let out = try File(path: output!)
-          try out.write(text)
+          return output.flatMap {
+              try? File(path: $0).write(text)
+          }.map { .success(()) } ?? .failure(CLIError.fileIOError(filename: output!))
       } else {
-        stdout <<< text
+          stdout <<< text
+          return .success(())
       }
     }
 
     func execute() throws {
         if bottomify {
-          try write(try getText().bottomified())
+            try write(getText().get().bottomified()).get()
         } else if regress {
-          try write(try getText().regressed())
+            try write(try getText().get().regressed()).get()
         }
     }
 }
