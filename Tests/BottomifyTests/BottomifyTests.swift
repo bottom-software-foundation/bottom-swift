@@ -2,16 +2,21 @@ import XCTest
 @testable import Bottomify
 
 final class BottomifyTests: XCTestCase {
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        let helloWorld = "💖✨✨,,👉👈💖💖,👉👈💖💖🥺,,,👉👈💖💖🥺,,,👉👈💖💖✨,👉👈✨✨✨,,👉👈💖✨✨✨🥺,,👉👈💖💖✨,👉👈💖💖✨,,,,👉👈💖💖🥺,,,👉👈💖💖👉👈✨✨✨,,,👉👈"
-        XCTAssertEqual("Hello World!".bottomified(), helloWorld)
-        XCTAssertEqual(try helloWorld.regressed(), "Hello World!")
+    func testBottomify() {
+        let bottomified = "💖✨✨,,👉👈💖💖,👉👈💖💖🥺,,,👉👈💖💖🥺,,,👉👈💖💖✨,👉👈✨✨✨,,👉👈💖✨✨✨🥺,,👉👈💖💖✨,👉👈💖💖✨,,,,👉👈💖💖🥺,,,👉👈💖💖👉👈✨✨✨,,,👉👈"
+        
+        let debottomified = "Hello World!"
+        let reversed = String(bottomified.reversed())
+        
+        XCTAssertEqual(debottomified.bottomified(), bottomified)
+        XCTAssertEqual(try? bottomified.regressed(), debottomified)
+        XCTAssertEqual(String(regressingCharactersIn: bottomified), debottomified)
+        
+        XCTAssertEqual(String(regressingCharactersIn: reversed), nil)
+        XCTAssertEqual(try? reversed.regressed(), nil)
     }
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testBottomify", testBottomify),
     ]
 }

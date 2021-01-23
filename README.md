@@ -4,11 +4,14 @@ A Swift library for [bottom](https://github.com/kaylynn234/bottom), following th
 
 ## Installing
 
-You can install ``bottom-swift`` by adding it as a local dependency:
+### SPM
+
+You can install ``bottom-swift`` by adding it as a SPM dependency:
+
 ```swift
-    dependencies: [
-        .package(name: "Bottomify", url: "https://github.com/bottom-software-foundation/bottom-swift", from: "0.1.1"),
-    ],
+dependencies: [
+    .package(name: "Bottomify", url: "https://github.com/bottom-software-foundation/bottom-swift", from: "0.1.1"),
+],
 ```
 
 ## Quick Example
